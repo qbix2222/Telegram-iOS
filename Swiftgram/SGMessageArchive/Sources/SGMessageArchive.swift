@@ -130,7 +130,7 @@ public final class SGMessageArchiveStore {
         for id in messageIds {
             guard let message = transaction.getMessage(id) else { continue }
             self.archiveMessage(message, deletedAt: timestamp)
-        })
+        }
     }
 
     public func archiveEdit(messageId: MessageId, transaction: Transaction) {
