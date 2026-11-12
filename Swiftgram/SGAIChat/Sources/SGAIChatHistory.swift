@@ -38,7 +38,7 @@ public final class SGAIChatHistoryStore {
     }
 
     public func append(_ message: SGAIMessage) {
-        queue.sync(execute: {
+        _ = queue.sync(execute: {
             var messages = load()
             messages.append(message)
             if messages.count > 500 {
@@ -49,7 +49,7 @@ public final class SGAIChatHistoryStore {
     }
 
     public func clear() {
-        queue.sync(execute: {
+        _ = queue.sync(execute: {
             try? FileManager.default.removeItem(at: fileURL)
         })
     }
