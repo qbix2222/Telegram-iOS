@@ -343,3 +343,20 @@
 "AutoPilot.HoursStart" = "From";
 "AutoPilot.HoursEnd" = "To";
 "Settings.AI.AutoPilot" = "AutoPilot (Auto-Reply)";
+
+"ProfileTheme.Title" = "Profile & Design";
+"ProfileTheme.ProfileHeader" = "PROFILE";
+"ProfileTheme.PreviewName" = "Zan";
+"ProfileTheme.PreviewBio" = "Bio preview text";
+"ProfileTheme.GradientStart" = "Avatar gradient start";
+"ProfileTheme.GradientEnd" = "Avatar gradient end";
+"ProfileTheme.NameSize" = "Name font size";
+"ProfileTheme.BioStyle" = "Bio style";
+"ProfileTheme.BioRegular" = "Regular";
+"ProfileTheme.BioItalic" = "Italic";
+"ProfileTheme.Chats" = "CHATS";
+"ProfileTheme.HideOnline" = "Hide online badge locally";
+"ProfileTheme.BubbleStyle" = "Bubble style";
+"ProfileTheme.BubbleClassic" = "Classic";
+"ProfileTheme.BubbleRounded" = "Rounded";
+"Settings.ProfileTheme.Open" = "Profile & Design";

@@ -335,3 +335,20 @@
 "AutoPilot.HoursStart" = "С";
 "AutoPilot.HoursEnd" = "До";
 "Settings.AI.AutoPilot" = "Автопилот (автоответы)";
+
+"ProfileTheme.Title" = "Профиль и дизайн";
+"ProfileTheme.ProfileHeader" = "ПРОФИЛЬ";
+"ProfileTheme.PreviewName" = "Зан";
+"ProfileTheme.PreviewBio" = "Текст био для предпросмотра";
+"ProfileTheme.GradientStart" = "Начало градиента аватара";
+"ProfileTheme.GradientEnd" = "Конец градиента аватара";
+"ProfileTheme.NameSize" = "Размер шрифта имени";
+"ProfileTheme.BioStyle" = "Стиль био";
+"ProfileTheme.BioRegular" = "Обычный";
+"ProfileTheme.BioItalic" = "Курсив";
+"ProfileTheme.Chats" = "ЧАТЫ";
+"ProfileTheme.HideOnline" = "Скрывать бейдж онлайн (локально)";
+"ProfileTheme.BubbleStyle" = "Стиль пузырей";
+"ProfileTheme.BubbleClassic" = "Классический";
+"ProfileTheme.BubbleRounded" = "Скруглённый";
+"Settings.ProfileTheme.Open" = "Профиль и дизайн";

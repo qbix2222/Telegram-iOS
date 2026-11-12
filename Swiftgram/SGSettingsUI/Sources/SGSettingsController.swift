@@ -143,6 +143,7 @@ private enum SGAIAction: String {
     case openProviders
     case openChat
     case openAutoPilot
+    case openProfileTheme
 }
 
 private struct PeerNameColorScreenState: Equatable {
@@ -188,6 +189,7 @@ private func SGControllerEntries(presentationData: PresentationData, callListSet
     entries.append(.action(id: id.count, section: .archive, actionType: SGAIAction.openProviders, text: i18n("Settings.AI.Providers", lang), kind: .generic))
     entries.append(.action(id: id.count, section: .archive, actionType: SGAIAction.openChat, text: i18n("Settings.AI.OpenChat", lang), kind: .generic))
     entries.append(.action(id: id.count, section: .archive, actionType: SGAIAction.openAutoPilot, text: i18n("Settings.AI.AutoPilot", lang), kind: .generic))
+    entries.append(.action(id: id.count, section: .archive, actionType: SGAIAction.openProfileTheme, text: i18n("Settings.ProfileTheme.Open", lang), kind: .generic))
     entries.append(.notice(id: id.count, section: .archive, text: i18n("Settings.AI.ActiveModel", lang).replacingOccurrences(of: "{model}", with: SGAIProviderStore.shared.active?.model ?? "—")))
 
     entries.append(.header(id: id.count, section: .archive, text: i18n("Settings.Archive.Header", lang), badge: nil))
@@ -734,6 +736,8 @@ public func sgSettingsController(context: AccountContext/*, focusOnItemTag: Int?
                 pushControllerImpl?(sgAIChatController(context: context))
             } else if aiAction == .openAutoPilot {
                 pushControllerImpl?(sgAutoPilotController(context: context))
+            } else if aiAction == .openProfileTheme {
+                pushControllerImpl?(sgProfileThemeController(context: context))
             }
             return
         }
