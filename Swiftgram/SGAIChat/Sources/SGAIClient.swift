@@ -71,29 +71,29 @@ public final class SGAIProviderStore {
     }
 
     public var all: [SGAIProvider] {
-        return queue.sync {
+        return queue.sync(execute: {
             loadIfNeeded()
             return providers
-        }
+        })
     }
 
     public var active: SGAIProvider? {
-        return queue.sync {
+        return queue.sync(execute: {
             loadIfNeeded()
             guard providers.indices.contains(activeIndex) else { return nil }
             return providers[activeIndex]
-        }
+        })
     }
 
     public func activeIndexValue() -> Int {
-        return queue.sync {
+        return queue.sync(execute: {
             loadIfNeeded()
             return activeIndex
-        }
+        })
     }
 
     public func save(_ provider: SGAIProvider, at index: Int?) {
-        queue.sync {
+        queue.sync(execute: {
             loadIfNeeded()
             if let index, providers.indices.contains(index) {
                 providers[index] = provider
@@ -102,26 +102,26 @@ public final class SGAIProviderStore {
                 activeIndex = providers.count - 1
             }
             persist()
-        }
+        })
     }
 
     public func remove(at index: Int) {
-        queue.sync {
+        queue.sync(execute: {
             loadIfNeeded()
             guard providers.indices.contains(index) else { return }
             providers.remove(at: index)
             activeIndex = min(activeIndex, max(providers.count - 1, 0))
             persist()
-        }
+        })
     }
 
     public func activate(_ index: Int) {
-        queue.sync {
+        queue.sync(execute: {
             loadIfNeeded()
             guard providers.indices.contains(index) else { return }
             activeIndex = index
             persist()
-        }
+        })
     }
 }
 

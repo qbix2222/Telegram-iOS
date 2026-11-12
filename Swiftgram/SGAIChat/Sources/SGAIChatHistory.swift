@@ -34,30 +34,30 @@ public final class SGAIChatHistoryStore {
     }
 
     public func history() -> [SGAIMessage] {
-        return queue.sync { load() }
+        return queue.sync(execute: { load() })
     }
 
     public func append(_ message: SGAIMessage) {
-        queue.sync {
+        queue.sync(execute: {
             var messages = load()
             messages.append(message)
             if messages.count > 500 {
                 messages.removeFirst(messages.count - 500)
             }
             persist(messages)
-        }
+        })
     }
 
     public func clear() {
-        queue.sync {
+        queue.sync(execute: {
             try? FileManager.default.removeItem(at: fileURL)
-        }
+        })
     }
 
     public func requestContext(limit: Int = 30) -> [(role: String, content: String)] {
-        return queue.sync {
+        return queue.sync(execute: {
             let messages = load().suffix(limit)
             return messages.map { (role: $0.role, content: $0.content) }
-        }
+        })
     }
 }

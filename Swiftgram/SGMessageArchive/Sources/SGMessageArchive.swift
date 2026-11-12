@@ -88,7 +88,7 @@ public final class SGMessageArchiveStore {
     }
 
     public func archiveMessage(_ message: Message, deletedAt: Int32) {
-        queue.sync {
+        queue.sync(execute: {
             loadIfNeeded()
             guard case let .Id(id) = message.id else { return }
             let key = id.peerId.toInt64()
@@ -121,7 +121,7 @@ public final class SGMessageArchiveStore {
                 }
             }
             persist()
-        }
+        })
     }
 
 
@@ -130,12 +130,12 @@ public final class SGMessageArchiveStore {
         for id in messageIds {
             guard let message = transaction.getMessage(id) else { continue }
             self.archiveMessage(message, deletedAt: timestamp)
-        }
+        })
     }
 
     public func archiveEdit(messageId: MessageId, transaction: Transaction) {
         guard let message = transaction.getMessage(messageId) else { return }
-        queue.sync {
+        queue.sync(execute: {
             loadIfNeeded()
             guard case let .Id(id) = message.id else { return }
             let key = id.peerId.toInt64()
@@ -156,43 +156,43 @@ public final class SGMessageArchiveStore {
             )
             cache[key]?[id.id] = edited
             persist()
-        }
+        })
     }
 
     public func archivedMessages(peerId: PeerId) -> [ArchivedDeletedMessage] {
-        return queue.sync {
+        return queue.sync(execute: {
             loadIfNeeded()
             return (cache[peerId.toInt64()]?.values.map { $0 } ?? []).sorted { $0.messageId < $1.messageId }
-        }
+        })
     }
 
     public func archivedMessage(peerId: PeerId, messageId: Int32) -> ArchivedDeletedMessage? {
-        return queue.sync {
+        return queue.sync(execute: {
             loadIfNeeded()
             return cache[peerId.toInt64()]?[messageId]
-        }
+        })
     }
 
     public func totalCount() -> Int {
-        return queue.sync {
+        return queue.sync(execute: {
             loadIfNeeded()
             return order.count
-        }
+        })
     }
 
     public func clearAll() {
-        queue.sync {
+        queue.sync(execute: {
             cache.removeAll()
             order.removeAll()
             try? FileManager.default.removeItem(at: archiveURL)
-        }
+        })
     }
 
     public func clear(peerId: PeerId) {
-        queue.sync {
+        queue.sync(execute: {
             cache.removeValue(forKey: peerId.toInt64())
             order.removeAll { $0.peerId == peerId.toInt64() }
             persist()
-        }
+        })
     }
 }

@@ -55,47 +55,47 @@ public final class SGAutoPilotStore {
     }
 
     public var enabledPeerIds: [Int64] {
-        return queue.sync {
+        return queue.sync(execute: {
             loadIfNeeded()
             return configs.values.filter { $0.enabled }.map { $0.peerId }
-        }
+        })
     }
 
     public func config(peerId: Int64) -> SGAutoPilotChatConfig? {
-        return queue.sync {
+        return queue.sync(execute: {
             loadIfNeeded()
             return configs[peerId]
-        }
+        })
     }
 
     public func setConfig(_ config: SGAutoPilotChatConfig) {
-        queue.sync {
+        queue.sync(execute: {
             loadIfNeeded()
             configs[config.peerId] = config
             persist()
-        }
+        })
     }
 
     public func removeConfig(peerId: Int64) {
-        queue.sync {
+        queue.sync(execute: {
             loadIfNeeded()
             configs.removeValue(forKey: peerId)
             persist()
-        }
+        })
     }
 
     public func isBusy(peerId: Int64) -> Bool {
-        return queue.sync { processing.contains(peerId) }
+        return queue.sync(execute: { processing.contains(peerId) })
     }
 
     public func setBusy(peerId: Int64, busy: Bool) {
-        queue.sync {
+        queue.sync(execute: {
             if busy {
                 processing.insert(peerId)
             } else {
                 processing.remove(peerId)
             }
-        }
+        })
     }
 
     public func isInActiveHours(_ config: SGAutoPilotChatConfig, date: Date = Date()) -> Bool {
