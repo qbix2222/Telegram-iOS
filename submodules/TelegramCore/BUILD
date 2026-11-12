@@ -5,6 +5,7 @@ load("@build_bazel_rules_apple//apple/testing/default_runner:ios_test_runner.bzl
 sgdeps = [
     "//Swiftgram/SGGTranslate:SGGTranslate",
     "//Swiftgram/SGSimpleSettings:SGSimpleSettings",
+    "//Swiftgram/SGMessageArchive:SGMessageArchive",
     "//Swiftgram/SGWebSettingsScheme:SGWebSettingsScheme",
     "//Swiftgram/SGGHSettingsScheme:SGGHSettingsScheme",
     "//Swiftgram/SGConfig:SGConfig",

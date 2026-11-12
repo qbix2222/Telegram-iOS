@@ -4,6 +4,7 @@ import SwiftSignalKit
 internal import TelegramApi
 import MtProtoKit
 import EncryptionProvider
+import SGMessageArchive
 
 /// Messages: added (to a history, scheduled, quick replies), edited and deleted, and ephemeral replacements; what hangs
 /// off a message: polls, media and web pages, pins, views, reactions, transcriptions, extended media; drafts and
@@ -274,6 +275,10 @@ extension ReplayContext {
     }
     
     func applyDeleteMessagesWithGlobalIds(_ ids: [Int32]) {
+        if SGMessageArchiveStore.shared.isEnabled {
+            let messageIds = self.postbox.messageIdsForGlobalIds(ids)
+            SGMessageArchiveStore.shared.archive(messageIds: messageIds, transaction: self.transaction)
+        }
         var resourceIds: [MediaResourceId] = []
         transaction.deleteMessagesWithGlobalIds(ids, forEachMedia: { media in
             addMessageMediaResourceIdsToRemove(media: media, resourceIds: &resourceIds)
@@ -285,6 +290,9 @@ extension ReplayContext {
     }
     
     func applyDeleteMessages(_ ids: [MessageId]) {
+        if SGMessageArchiveStore.shared.isEnabled {
+            SGMessageArchiveStore.shared.archive(messageIds: ids, transaction: self.transaction)
+        }
         _internal_deleteMessages(transaction: transaction, mediaBox: mediaBox, ids: ids, manualAddMessageThreadStatsDifference: { id, add, remove in
             self.addMessageThreadStatsDifference(threadKey: id, remove: remove, addedMessagePeer: nil, addedMessageId: nil, isOutgoing: false)
         })
@@ -305,6 +313,9 @@ extension ReplayContext {
     }
     
     func applyEditMessage(_ id: MessageId, _ message: StoreMessage) {
+        if SGMessageArchiveStore.shared.isEnabled {
+            SGMessageArchiveStore.shared.archiveEdit(messageId: id, transaction: self.transaction)
+        }
         var generatedEvent: (reactionAuthor: Peer, reaction: MessageReaction.Reaction, message: Message, timestamp: Int32)?
         transaction.updateMessage(id, update: { previousMessage in
             let peers: [PeerId:Peer] = previousMessage.peers.reduce([:], { current, value in
