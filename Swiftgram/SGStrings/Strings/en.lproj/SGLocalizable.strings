@@ -325,3 +325,21 @@
 "Common.Edit" = "Edit";
 "Common.Delete" = "Delete";
 "Common.Cancel" = "Cancel";
+
+"AutoPilot.Title" = "AutoPilot";
+"AutoPilot.Header" = "AUTOPILOT";
+"AutoPilot.Empty" = "No chats configured. Add a chat peerId and set a system prompt — incoming messages will be answered automatically by the active AI provider.";
+"AutoPilot.Add" = "Add Chat";
+"AutoPilot.Edit" = "Edit AutoPilot";
+"AutoPilot.NoPrompt" = "No prompt set";
+"AutoPilot.PeerId" = "Chat Peer ID (long number)";
+"AutoPilot.Prompt" = "SYSTEM PROMPT";
+"AutoPilot.Behavior" = "BEHAVIOR";
+"AutoPilot.Enabled" = "Enabled";
+"AutoPilot.Context" = "Context messages";
+"AutoPilot.Delay" = "Typing delay";
+"AutoPilot.Hours" = "ACTIVE HOURS";
+"AutoPilot.HoursToggle" = "Limit to hours";
+"AutoPilot.HoursStart" = "From";
+"AutoPilot.HoursEnd" = "To";
+"Settings.AI.AutoPilot" = "AutoPilot (Auto-Reply)";

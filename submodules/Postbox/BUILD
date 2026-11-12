@@ -48,6 +48,7 @@ package_group(
         "//submodules/TelegramUniversalVideoContent",
         "//submodules/TemporaryCachedPeerDataManager",
         "//Swiftgram/SGMessageArchive",
+        "//Swiftgram/SGAutoPilot",
     ],
 )
 

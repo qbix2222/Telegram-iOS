@@ -2,6 +2,8 @@
 import SGIAP
 import SGPayWall
 import SGProUI
+import SGAutoPilot
+import SGAIChat
 import SGSimpleSettings
 //
 import Foundation
@@ -597,6 +599,9 @@ public final class SharedAccountContextImpl: SharedAccountContext {
             }
         })
         self.initSGIAP(isMainApp: applicationBindings.isMainApp)
+        if applicationBindings.isMainApp {
+            SGAutoPilotEngine.shared.start(context: context)
+        }
         //
         
         let _ = self.contactDataManager?.personNameDisplayOrder().start(next: { order in

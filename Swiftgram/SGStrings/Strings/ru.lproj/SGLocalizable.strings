@@ -317,3 +317,21 @@
 "Common.Edit" = "Изменить";
 "Common.Delete" = "Удалить";
 "Common.Cancel" = "Отмена";
+
+"AutoPilot.Title" = "Автопилот";
+"AutoPilot.Header" = "АВТОПИЛОТ";
+"AutoPilot.Empty" = "Нет настроенных чатов. Добавьте peerId чата и системный промпт — входящие сообщения будут автоматически отвечаться активным ИИ-провайдером.";
+"AutoPilot.Add" = "Добавить чат";
+"AutoPilot.Edit" = "Редактировать автопилот";
+"AutoPilot.NoPrompt" = "Промпт не задан";
+"AutoPilot.PeerId" = "Peer ID чата (длинное число)";
+"AutoPilot.Prompt" = "СИСТЕМНЫЙ ПРОМПТ";
+"AutoPilot.Behavior" = "ПОВЕДЕНИЕ";
+"AutoPilot.Enabled" = "Включено";
+"AutoPilot.Context" = "Сообщений в контексте";
+"AutoPilot.Delay" = "Задержка «печатает»";
+"AutoPilot.Hours" = "АКТИВНЫЕ ЧАСЫ";
+"AutoPilot.HoursToggle" = "Ограничить по часам";
+"AutoPilot.HoursStart" = "С";
+"AutoPilot.HoursEnd" = "До";
+"Settings.AI.AutoPilot" = "Автопилот (автоответы)";

@@ -13,6 +13,7 @@ sgdeps = [
     "//Swiftgram/SGAppGroupIdentifier:SGAppGroupIdentifier",
     "//Swiftgram/SGSimpleSettings:SGSimpleSettings",
     "//Swiftgram/SGMessageArchive:SGMessageArchive",
+    "//Swiftgram/SGAutoPilot:SGAutoPilot",
     "//Swiftgram/SGAIChat:SGAIChat",
     "//Swiftgram/SFSafariViewControllerPlus:SFSafariViewControllerPlus",
     "//Swiftgram/SGLogging:SGLogging",

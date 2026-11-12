@@ -21,6 +21,7 @@ swift_library(
         "//Swiftgram/SGSimpleSettings:SGSimpleSettings",
         "//Swiftgram/SGMessageArchive:SGMessageArchive",
         "//Swiftgram/SGAIChat:SGAIChat",
+        "//Swiftgram/SGAutoPilot:SGAutoPilot",
         "//Swiftgram/SGStrings:SGStrings",
 #        "//Swiftgram/SGAPI:SGAPI",
         "//Swiftgram/SGAPIToken:SGAPIToken",
