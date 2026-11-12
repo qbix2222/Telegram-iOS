@@ -298,3 +298,30 @@
 "Settings.Archive.Clear" = "Clear archive";
 "Settings.Archive.Notice" = "Deleted messages are stored locally on this device only.";
 "Settings.Archive.Cleared" = "Archive cleared";
+
+"Settings.AI.Header" = "AI ASSISTANT";
+"Settings.AI.Title" = "AI";
+"Settings.AI.Providers" = "AI Providers";
+"Settings.AI.OpenChat" = "Open AI Chat";
+"Settings.AI.ActiveModel" = "Active model: {model}";
+"Settings.AI.Chat" = "AI Chat";
+"Settings.AI.AddProvider" = "Add Provider";
+"Settings.AI.Name" = "Name";
+"Settings.AI.NamePlaceholder" = "My Provider";
+"Settings.AI.Endpoint" = "Endpoint & Key";
+"Settings.AI.ApiKey" = "API Key (optional)";
+"Settings.AI.LoadModels" = "Load Models";
+"Settings.AI.Model" = "Model";
+"Settings.AI.NoModel" = "no model";
+"Settings.AI.NoModels" = "No models returned";
+"Settings.AI.SystemPrompt" = "System Prompt";
+"Settings.AI.Temperature" = "Temperature";
+"Settings.AI.InputPlaceholder" = "Message AI…";
+"Settings.AI.Thinking" = "Thinking…";
+"Settings.AI.ClearChat" = "Clear Chat";
+"Settings.AI.Footer" = "Any OpenAI-compatible endpoint. The app fetches the model list from /v1/models automatically.";
+
+"Common.Save" = "Save";
+"Common.Edit" = "Edit";
+"Common.Delete" = "Delete";
+"Common.Cancel" = "Cancel";

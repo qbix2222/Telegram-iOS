@@ -20,6 +20,7 @@ swift_library(
         "//Swiftgram/SGLogging:SGLogging",
         "//Swiftgram/SGSimpleSettings:SGSimpleSettings",
         "//Swiftgram/SGMessageArchive:SGMessageArchive",
+        "//Swiftgram/SGAIChat:SGAIChat",
         "//Swiftgram/SGStrings:SGStrings",
 #        "//Swiftgram/SGAPI:SGAPI",
         "//Swiftgram/SGAPIToken:SGAPIToken",

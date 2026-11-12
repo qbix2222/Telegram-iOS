@@ -1,4 +1,5 @@
 // MARK: Swiftgram
+import SGAIChat
 import SGLogging
 import SGMessageArchive
 import SGSimpleSettings
@@ -138,6 +139,11 @@ private enum SGArchiveAction: String {
     case clearArchive
 }
 
+private enum SGAIAction: String {
+    case openProviders
+    case openChat
+}
+
 private struct PeerNameColorScreenState: Equatable {
     var updatedNameColor: PeerNameColor?
     var updatedBackgroundEmojiId: Int64?
@@ -177,6 +183,11 @@ private func SGControllerEntries(presentationData: PresentationData, callListSet
         id.increment(1)
     }
     
+    entries.append(.header(id: id.count, section: .archive, text: i18n("Settings.AI.Header", lang), badge: nil))
+    entries.append(.action(id: id.count, section: .archive, actionType: SGAIAction.openProviders, text: i18n("Settings.AI.Providers", lang), kind: .generic))
+    entries.append(.action(id: id.count, section: .archive, actionType: SGAIAction.openChat, text: i18n("Settings.AI.OpenChat", lang), kind: .generic))
+    entries.append(.notice(id: id.count, section: .archive, text: i18n("Settings.AI.ActiveModel", lang).replacingOccurrences(of: "{model}", with: SGAIProviderStore.shared.active?.model ?? "—")))
+
     entries.append(.header(id: id.count, section: .archive, text: i18n("Settings.Archive.Header", lang), badge: nil))
     entries.append(.toggle(id: id.count, section: .archive, settingName: .messageArchiveEnabled, value: SGMessageArchiveStore.shared.isEnabled, text: i18n("Settings.Archive.Enabled", lang), enabled: true))
     entries.append(.action(id: id.count, section: .archive, actionType: SGArchiveAction.clearArchive, text: i18n("Settings.Archive.Clear", lang), kind: .destructive))
@@ -714,6 +725,14 @@ public func sgSettingsController(context: AccountContext/*, focusOnItemTag: Int?
         }
     }, action: { [weak context] action in
         guard let context else { return }
+        if let aiAction = action as? SGAIAction {
+            if aiAction == .openProviders {
+                pushControllerImpl?(sgAIChatRootController(context: context))
+            } else if aiAction == .openChat {
+                pushControllerImpl?(sgAIChatController(context: context))
+            }
+            return
+        }
         if let archiveAction = action as? SGArchiveAction, archiveAction == .clearArchive {
             SGMessageArchiveStore.shared.clearAll()
             let presentationData = context.sharedContext.currentPresentationData.with { $0 }

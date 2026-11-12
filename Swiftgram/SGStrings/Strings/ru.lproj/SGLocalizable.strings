@@ -290,3 +290,30 @@
 "Settings.Archive.Clear" = "Очистить архив";
 "Settings.Archive.Notice" = "Удалённые сообщения хранятся только на этом устройстве.";
 "Settings.Archive.Cleared" = "Архив очищен";
+
+"Settings.AI.Header" = "ИИ-АССИСТЕНТ";
+"Settings.AI.Title" = "ИИ";
+"Settings.AI.Providers" = "ИИ-провайдеры";
+"Settings.AI.OpenChat" = "Открыть чат с ИИ";
+"Settings.AI.ActiveModel" = "Активная модель: {model}";
+"Settings.AI.Chat" = "Чат с ИИ";
+"Settings.AI.AddProvider" = "Добавить провайдера";
+"Settings.AI.Name" = "Название";
+"Settings.AI.NamePlaceholder" = "Мой провайдер";
+"Settings.AI.Endpoint" = "Эндпоинт и ключ";
+"Settings.AI.ApiKey" = "API-ключ (опционально)";
+"Settings.AI.LoadModels" = "Загрузить модели";
+"Settings.AI.Model" = "Модель";
+"Settings.AI.NoModel" = "нет модели";
+"Settings.AI.NoModels" = "Список моделей пуст";
+"Settings.AI.SystemPrompt" = "Системный промпт";
+"Settings.AI.Temperature" = "Температура";
+"Settings.AI.InputPlaceholder" = "Сообщение ИИ…";
+"Settings.AI.Thinking" = "Думает…";
+"Settings.AI.ClearChat" = "Очистить чат";
+"Settings.AI.Footer" = "Любой OpenAI-совместимый эндпоинт. Список моделей подтягивается с /v1/models автоматически.";
+
+"Common.Save" = "Сохранить";
+"Common.Edit" = "Изменить";
+"Common.Delete" = "Удалить";
+"Common.Cancel" = "Отмена";
