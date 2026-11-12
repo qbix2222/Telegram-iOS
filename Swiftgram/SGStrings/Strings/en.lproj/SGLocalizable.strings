@@ -292,3 +292,9 @@
 "Settings.NY.Style.lightning" = "Lightning";
 "Settings.NY.Notice" = "Available for a limited time only!";
 "Settings.HideAccountInNotifications" = "Hide Account in Notifications";
+
+"Settings.Archive.Header" = "MESSAGE ARCHIVE";
+"Settings.Archive.Enabled" = "Keep deleted and edited messages";
+"Settings.Archive.Clear" = "Clear archive";
+"Settings.Archive.Notice" = "Deleted messages are stored locally on this device only.";
+"Settings.Archive.Cleared" = "Archive cleared";

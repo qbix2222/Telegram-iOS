@@ -1,5 +1,6 @@
 // MARK: Swiftgram
 import SGLogging
+import SGMessageArchive
 import SGSimpleSettings
 import SGStrings
 import SGAPIToken
@@ -41,10 +42,12 @@ private enum SGControllerSection: Int32, SGItemListSection {
     case videoNotes
     case contextMenu
     case accountColors
+    case archive
     case other
 }
 
 private enum SGBoolSetting: String {
+    case messageArchiveEnabled
     case hidePhoneInSettings
     case showTabNames
     case showContactsTab
@@ -131,6 +134,10 @@ private enum SGDisclosureLink: String {
     case languageSettings
 }
 
+private enum SGArchiveAction: String {
+    case clearArchive
+}
+
 private struct PeerNameColorScreenState: Equatable {
     var updatedNameColor: PeerNameColor?
     var updatedBackgroundEmojiId: Int64?
@@ -170,6 +177,11 @@ private func SGControllerEntries(presentationData: PresentationData, callListSet
         id.increment(1)
     }
     
+    entries.append(.header(id: id.count, section: .archive, text: i18n("Settings.Archive.Header", lang), badge: nil))
+    entries.append(.toggle(id: id.count, section: .archive, settingName: .messageArchiveEnabled, value: SGMessageArchiveStore.shared.isEnabled, text: i18n("Settings.Archive.Enabled", lang), enabled: true))
+    entries.append(.action(id: id.count, section: .archive, actionType: SGArchiveAction.clearArchive, text: i18n("Settings.Archive.Clear", lang), kind: .destructive))
+    entries.append(.notice(id: id.count, section: .archive, text: i18n("Settings.Archive.Notice", lang)))
+
     entries.append(.header(id: id.count, section: .tabs, text: i18n("Settings.Tabs.Header", lang), badge: nil))
     entries.append(.toggle(id: id.count, section: .tabs, settingName: .hideTabBar, value: SGSimpleSettings.shared.hideTabBar, text: i18n("Settings.Tabs.HideTabBar", lang), enabled: true))
     entries.append(.toggle(id: id.count, section: .tabs, settingName: .showContactsTab, value: callListSettings.showContactsTab, text: i18n("Settings.Tabs.ShowContacts", lang), enabled: !SGSimpleSettings.shared.hideTabBar))
@@ -371,6 +383,9 @@ public func sgSettingsController(context: AccountContext/*, focusOnItemTag: Int?
           }
         },*/ setBoolValue: { setting, value in
         switch setting {
+        case .messageArchiveEnabled:
+            UserDefaults.standard.set(value, forKey: "sgMessageArchiveEnabled")
+            UserDefaults.standard.set(true, forKey: "sgMessageArchiveConfigured")
         case .hidePhoneInSettings:
             SGSimpleSettings.shared.hidePhoneInSettings = value
             askForRestart?()
@@ -696,6 +711,13 @@ public func sgSettingsController(context: AccountContext/*, focusOnItemTag: Int?
                     }
                     strongContext.sharedContext.applicationBindings.openUrl(url)
                 })
+        }
+    }, action: { [weak context] action in
+        guard let context else { return }
+        if let archiveAction = action as? SGArchiveAction, archiveAction == .clearArchive {
+            SGMessageArchiveStore.shared.clearAll()
+            let presentationData = context.sharedContext.currentPresentationData.with { $0 }
+            context.sharedContext.mainWindow?.present(UndoOverlayController(presentationData: presentationData, content: .info(title: nil, text: i18n("Settings.Archive.Cleared", presentationData.strings.baseLanguageCode), timeout: nil, action: { _ in return true }), action: { _ in return true }), in: .window(.root))
         }
     }, searchInput: { searchQuery in
         updateState { state in

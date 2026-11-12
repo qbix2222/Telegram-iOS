@@ -284,3 +284,9 @@
 "Settings.NY.Notice" = "Доступны только на ограниченное время!";
 "Settings.videoControlsInFooter" = "Кнопки видео снизу";
 "Settings.HideAccountInNotifications" = "Скрыть аккаунт в уведомлениях";
+
+"Settings.Archive.Header" = "АРХИВ СООБЩЕНИЙ";
+"Settings.Archive.Enabled" = "Сохранять удалённые и изменённые сообщения";
+"Settings.Archive.Clear" = "Очистить архив";
+"Settings.Archive.Notice" = "Удалённые сообщения хранятся только на этом устройстве.";
+"Settings.Archive.Cleared" = "Архив очищен";
