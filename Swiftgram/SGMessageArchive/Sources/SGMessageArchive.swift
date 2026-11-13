@@ -36,7 +36,7 @@ public final class SGMessageArchiveStore {
         return UserDefaults.standard.bool(forKey: "sgMessageArchiveEnabled") || !UserDefaults.standard.bool(forKey: "sgMessageArchiveConfigured")
     }
 
-    private let queue = DispatchQueue(label: "com.swiftgram.messageArchive")
+    private let lock = NSLock()
     private let maxMessages = 50000
 
     private var cache: [Int64: [Int32: ArchivedDeletedMessage]] = [:]
@@ -51,7 +51,9 @@ public final class SGMessageArchiveStore {
     }
 
     private init() {
-        queue.async { self.loadIfNeeded() }
+        lock.lock()
+        defer { lock.unlock() }
+        loadIfNeeded()
     }
 
     private func loadIfNeeded() {
@@ -88,41 +90,40 @@ public final class SGMessageArchiveStore {
     }
 
     public func archiveMessage(_ message: Message, deletedAt: Int32) {
-        let _: Bool = queue.sync { () -> Bool in
-            loadIfNeeded()
-            guard case let .Id(id) = message.id else { return false }
-            let key = id.peerId.toInt64()
-            if cache[key]?[id.id] != nil { return false }
+        lock.lock()
+        defer { lock.unlock() }
+        loadIfNeeded()
+        guard case let .Id(id) = message.id else { return }
+        let key = id.peerId.toInt64()
+        if cache[key]?[id.id] != nil { return }
 
-            let mediaSummary = message.media.map { media -> String in
-                String(describing: type(of: media))
-            }
-
-            let archived = ArchivedDeletedMessage(
-                peerId: key,
-                messageId: id.id,
-                namespace: id.namespace,
-                globallyUniqueId: message.globallyUniqueId,
-                timestamp: message.timestamp,
-                deletedAt: deletedAt,
-                authorId: message.authorId?.toInt64(),
-                text: message.text,
-                mediaSummary: mediaSummary,
-                isOutgoing: !message.flags.contains(.Incoming),
-                serializedMessage: Data()
-            )
-            if cache[key] == nil { cache[key] = [:] }
-            cache[key]?[id.id] = archived
-            order.append((key, id.id))
-            if order.count > maxMessages {
-                let drop = order.removeFirst(order.count - maxMessages)
-                for d in drop {
-                    cache[d.peerId]?.removeValue(forKey: d.messageId)
-                }
-            }
-            persist()
-            return true
+        let mediaSummary = message.media.map { media -> String in
+            String(describing: type(of: media))
         }
+
+        let archived = ArchivedDeletedMessage(
+            peerId: key,
+            messageId: id.id,
+            namespace: id.namespace,
+            globallyUniqueId: message.globallyUniqueId,
+            timestamp: message.timestamp,
+            deletedAt: deletedAt,
+            authorId: message.authorId?.toInt64(),
+            text: message.text,
+            mediaSummary: mediaSummary,
+            isOutgoing: !message.flags.contains(.Incoming),
+            serializedMessage: Data()
+        )
+        if cache[key] == nil { cache[key] = [:] }
+        cache[key]?[id.id] = archived
+        order.append((key, id.id))
+        if order.count > maxMessages {
+            let drop = order.removeFirst(order.count - maxMessages)
+            for d in drop {
+                cache[d.peerId]?.removeValue(forKey: d.messageId)
+            }
+        }
+        persist()
     }
 
 
@@ -136,67 +137,64 @@ public final class SGMessageArchiveStore {
 
     public func archiveEdit(messageId: MessageId, transaction: Transaction) {
         guard let message = transaction.getMessage(messageId) else { return }
-        let _: Bool = queue.sync { () -> Bool in
-            loadIfNeeded()
-            guard case let .Id(id) = message.id else { return false }
-            let key = id.peerId.toInt64()
-            guard let existing = cache[key]?[id.id] else { return false }
-            if existing.text == message.text { return false }
-            let edited = ArchivedDeletedMessage(
-                peerId: existing.peerId,
-                messageId: existing.messageId,
-                namespace: existing.namespace,
-                globallyUniqueId: existing.globallyUniqueId,
-                timestamp: existing.timestamp,
-                deletedAt: existing.deletedAt,
-                authorId: existing.authorId,
-                text: existing.text + "\n[edit] " + message.text,
-                mediaSummary: existing.mediaSummary,
-                isOutgoing: existing.isOutgoing,
-                serializedMessage: existing.serializedMessage
-            )
-            cache[key]?[id.id] = edited
-            persist()
-            return true
-        }
+        lock.lock()
+        defer { lock.unlock() }
+        loadIfNeeded()
+        guard case let .Id(id) = message.id else { return }
+        let key = id.peerId.toInt64()
+        guard let existing = cache[key]?[id.id] else { return }
+        if existing.text == message.text { return }
+        let edited = ArchivedDeletedMessage(
+            peerId: existing.peerId,
+            messageId: existing.messageId,
+            namespace: existing.namespace,
+            globallyUniqueId: existing.globallyUniqueId,
+            timestamp: existing.timestamp,
+            deletedAt: existing.deletedAt,
+            authorId: existing.authorId,
+            text: existing.text + "\n[edit] " + message.text,
+            mediaSummary: existing.mediaSummary,
+            isOutgoing: existing.isOutgoing,
+            serializedMessage: existing.serializedMessage
+        )
+        cache[key]?[id.id] = edited
+        persist()
     }
 
     public func archivedMessages(peerId: PeerId) -> [ArchivedDeletedMessage] {
-        return queue.sync(execute: {
-            loadIfNeeded()
-            return (cache[peerId.toInt64()]?.values.map { $0 } ?? []).sorted { $0.messageId < $1.messageId }
-        })
+        lock.lock()
+        defer { lock.unlock() }
+        loadIfNeeded()
+        return (cache[peerId.toInt64()]?.values.map { $0 } ?? []).sorted { $0.messageId < $1.messageId }
     }
 
     public func archivedMessage(peerId: PeerId, messageId: Int32) -> ArchivedDeletedMessage? {
-        return queue.sync(execute: {
-            loadIfNeeded()
-            return cache[peerId.toInt64()]?[messageId]
-        })
+        lock.lock()
+        defer { lock.unlock() }
+        loadIfNeeded()
+        return cache[peerId.toInt64()]?[messageId]
     }
 
     public func totalCount() -> Int {
-        return queue.sync(execute: {
-            loadIfNeeded()
-            return order.count
-        })
+        lock.lock()
+        defer { lock.unlock() }
+        loadIfNeeded()
+        return order.count
     }
 
     public func clearAll() {
-        let _: Bool = queue.sync { () -> Bool in
-            cache.removeAll()
-            order.removeAll()
-            try? FileManager.default.removeItem(at: archiveURL)
-            return true
-        }
+        lock.lock()
+        defer { lock.unlock() }
+        cache.removeAll()
+        order.removeAll()
+        try? FileManager.default.removeItem(at: archiveURL)
     }
 
     public func clear(peerId: PeerId) {
-        let _: Bool = queue.sync { () -> Bool in
-            cache.removeValue(forKey: peerId.toInt64())
-            order.removeAll { $0.peerId == peerId.toInt64() }
-            persist()
-            return true
-        }
+        lock.lock()
+        defer { lock.unlock() }
+        cache.removeValue(forKey: peerId.toInt64())
+        order.removeAll { $0.peerId == peerId.toInt64() }
+        persist()
     }
 }
