@@ -1,6 +1,4 @@
 import Foundation
-import Postbox
-import TelegramCore
 
 public struct SGAutoPilotChatConfig: Codable {
     public var peerId: Int64
@@ -27,7 +25,7 @@ public struct SGAutoPilotChatConfig: Codable {
 public final class SGAutoPilotStore {
     public static let shared = SGAutoPilotStore()
 
-    private let queue = DispatchQueue(label: "com.swiftgram.autoPilot")
+    private let lock = NSLock()
     private var configs: [Int64: SGAutoPilotChatConfig] = [:]
     private var loaded = false
     private var processing: Set<Int64> = []
@@ -48,55 +46,54 @@ public final class SGAutoPilotStore {
     }
 
     private func persist() {
-        let encoder = JSONEncoder()
-        if let data = try? encoder.encode(Array(configs.values)) {
+        if let data = try? JSONEncoder().encode(Array(configs.values)) {
             try? data.write(to: storeURL, options: .atomic)
         }
     }
 
     public var enabledPeerIds: [Int64] {
-        return queue.sync(execute: {
-            loadIfNeeded()
-            return configs.values.filter { $0.enabled }.map { $0.peerId }
-        })
+        lock.lock()
+        defer { lock.unlock() }
+        loadIfNeeded()
+        return configs.values.filter { $0.enabled }.map { $0.peerId }
     }
 
     public func config(peerId: Int64) -> SGAutoPilotChatConfig? {
-        return queue.sync(execute: {
-            loadIfNeeded()
-            return configs[peerId]
-        })
+        lock.lock()
+        defer { lock.unlock() }
+        loadIfNeeded()
+        return configs[peerId]
     }
 
     public func setConfig(_ config: SGAutoPilotChatConfig) {
-        let _: Bool = queue.sync { () -> Bool in
-            loadIfNeeded()
-            configs[config.peerId] = config
-            persist()
-        })
+        lock.lock()
+        defer { lock.unlock() }
+        loadIfNeeded()
+        configs[config.peerId] = config
+        persist()
     }
 
     public func removeConfig(peerId: Int64) {
-        let _: Bool = queue.sync { () -> Bool in
-            loadIfNeeded()
-            configs.removeValue(forKey: peerId)
-            persist()
-            return true
-        }
+        lock.lock()
+        defer { lock.unlock() }
+        loadIfNeeded()
+        configs.removeValue(forKey: peerId)
+        persist()
     }
 
     public func isBusy(peerId: Int64) -> Bool {
-        return queue.sync(execute: { processing.contains(peerId) })
+        lock.lock()
+        defer { lock.unlock() }
+        return processing.contains(peerId)
     }
 
     public func setBusy(peerId: Int64, busy: Bool) {
-        let _: Bool = queue.sync { () -> Bool in
-            if busy {
-                processing.insert(peerId)
-            } else {
-                processing.remove(peerId)
-            }
-            return true
+        lock.lock()
+        defer { lock.unlock() }
+        if busy {
+            processing.insert(peerId)
+        } else {
+            processing.remove(peerId)
         }
     }
 

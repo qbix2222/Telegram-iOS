@@ -2,6 +2,7 @@ import Foundation
 import Postbox
 import SwiftSignalKit
 import TelegramCore
+import AccountContext
 import SGAIChat
 
 public final class SGAutoPilotEngine {
@@ -87,8 +88,8 @@ public final class SGAutoPilotEngine {
         try? FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
         let line = "\(Date().timeIntervalSince1970)\t\(peerId.toInt64())\t\(error)\n"
         if let handle = FileHandle(forWritingAtPath: dir.appendingPathComponent("errors.log").path) {
-            handle.seekToEnd()
-            handle.write(line.data(using: .utf8)!)
+            try? handle.seekToEnd()
+            try? handle.write(line.data(using: .utf8) ?? Data())
             try? handle.close()
         } else {
             try? line.data(using: .utf8)?.write(to: dir.appendingPathComponent("errors.log"))

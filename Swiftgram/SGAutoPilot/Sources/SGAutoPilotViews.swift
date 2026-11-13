@@ -4,6 +4,7 @@ import SGSwiftUI
 import SGStrings
 import SGAIChat
 import AccountContext
+import Display
 import TelegramPresentationData
 
 public func sgAutoPilotController(context: AccountContext, presentationData: PresentationData? = nil) -> ViewController {
