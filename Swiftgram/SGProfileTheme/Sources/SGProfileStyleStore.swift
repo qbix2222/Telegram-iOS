@@ -55,7 +55,7 @@ public final class SGProfileStyleStore {
 
     public var current: SGProfileStyle {
         get { queue.sync(execute: { loadIfNeeded(); return style }) }
-        set { _ = queue.sync(execute: { style = newValue; persist() }) }
+        set { _ = queue.sync { () -> Void in style = newValue; persist() }) }
     }
 
     public func color(from hex: String) -> UIColor {

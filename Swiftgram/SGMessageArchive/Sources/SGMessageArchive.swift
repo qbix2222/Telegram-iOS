@@ -88,7 +88,7 @@ public final class SGMessageArchiveStore {
     }
 
     public func archiveMessage(_ message: Message, deletedAt: Int32) {
-        _ = queue.sync(execute: {
+        _ = queue.sync { () -> Void in
             loadIfNeeded()
             guard case let .Id(id) = message.id else { return }
             let key = id.peerId.toInt64()
@@ -121,7 +121,7 @@ public final class SGMessageArchiveStore {
                 }
             }
             persist()
-        })
+        }
     }
 
 
@@ -135,7 +135,7 @@ public final class SGMessageArchiveStore {
 
     public func archiveEdit(messageId: MessageId, transaction: Transaction) {
         guard let message = transaction.getMessage(messageId) else { return }
-        _ = queue.sync(execute: {
+        _ = queue.sync { () -> Void in
             loadIfNeeded()
             guard case let .Id(id) = message.id else { return }
             let key = id.peerId.toInt64()
@@ -156,7 +156,7 @@ public final class SGMessageArchiveStore {
             )
             cache[key]?[id.id] = edited
             persist()
-        })
+        }
     }
 
     public func archivedMessages(peerId: PeerId) -> [ArchivedDeletedMessage] {
@@ -181,18 +181,18 @@ public final class SGMessageArchiveStore {
     }
 
     public func clearAll() {
-        _ = queue.sync(execute: {
+        _ = queue.sync { () -> Void in
             cache.removeAll()
             order.removeAll()
             try? FileManager.default.removeItem(at: archiveURL)
-        })
+        }
     }
 
     public func clear(peerId: PeerId) {
-        _ = queue.sync(execute: {
+        _ = queue.sync { () -> Void in
             cache.removeValue(forKey: peerId.toInt64())
             order.removeAll { $0.peerId == peerId.toInt64() }
             persist()
-        })
+        }
     }
 }

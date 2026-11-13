@@ -69,7 +69,7 @@ public final class SGAutoPilotStore {
     }
 
     public func setConfig(_ config: SGAutoPilotChatConfig) {
-        _ = queue.sync(execute: {
+        _ = queue.sync { () -> Void in
             loadIfNeeded()
             configs[config.peerId] = config
             persist()
@@ -77,7 +77,7 @@ public final class SGAutoPilotStore {
     }
 
     public func removeConfig(peerId: Int64) {
-        _ = queue.sync(execute: {
+        _ = queue.sync { () -> Void in
             loadIfNeeded()
             configs.removeValue(forKey: peerId)
             persist()
@@ -89,7 +89,7 @@ public final class SGAutoPilotStore {
     }
 
     public func setBusy(peerId: Int64, busy: Bool) {
-        _ = queue.sync(execute: {
+        _ = queue.sync { () -> Void in
             if busy {
                 processing.insert(peerId)
             } else {
