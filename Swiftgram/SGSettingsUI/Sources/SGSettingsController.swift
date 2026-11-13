@@ -2,6 +2,8 @@
 import SGAIChat
 import SGLogging
 import SGMessageArchive
+import SGAutoPilot
+import SGProfileTheme
 import SGSimpleSettings
 import SGStrings
 import SGAPIToken
