@@ -599,9 +599,6 @@ public final class SharedAccountContextImpl: SharedAccountContext {
             }
         })
         self.initSGIAP(isMainApp: applicationBindings.isMainApp)
-        if applicationBindings.isMainApp {
-            SGAutoPilotEngine.shared.start(context: context)
-        }
         //
         
         let _ = self.contactDataManager?.personNameDisplayOrder().start(next: { order in
@@ -817,6 +814,7 @@ public final class SharedAccountContextImpl: SharedAccountContext {
                             let context = AccountContextImpl(sharedContext: self, account: account, limitsConfiguration: accountRecord.3.limitsConfiguration ?? .defaultValue, contentSettings: accountRecord.3.contentSettings ?? .default, appConfiguration: accountRecord.3.appConfiguration ?? .defaultValue, availableReplyColors: accountRecord.3.availableReplyColors, availableProfileColors: accountRecord.3.availableProfileColors)
 
                             self.activeAccountsValue!.accounts.append((account.id, context, accountRecord.2))
+                            SGAutoPilotEngine.shared.start(context: context)
                             
                             self.managedAccountDisposables.set(self.updateAccountBackupData(account: account).start(), forKey: account.id)
                             account.resetStateManagement()
