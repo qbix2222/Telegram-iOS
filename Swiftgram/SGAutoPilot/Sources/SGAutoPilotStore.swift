@@ -77,11 +77,12 @@ public final class SGAutoPilotStore {
     }
 
     public func removeConfig(peerId: Int64) {
-        _ = queue.sync { () -> Void in
+        let _: Bool = queue.sync { () -> Bool in
             loadIfNeeded()
             configs.removeValue(forKey: peerId)
             persist()
-        })
+            return true
+        }
     }
 
     public func isBusy(peerId: Int64) -> Bool {
@@ -89,15 +90,14 @@ public final class SGAutoPilotStore {
     }
 
     public func setBusy(peerId: Int64, busy: Bool) {
-        _ = queue.sync { () -> Void in
+        let _: Bool = queue.sync { () -> Bool in
             if busy {
                 processing.insert(peerId)
-            
-            return true
-        } else {
+            } else {
                 processing.remove(peerId)
             }
-        })
+            return true
+        }
     }
 
     public func isInActiveHours(_ config: SGAutoPilotChatConfig, date: Date = Date()) -> Bool {
