@@ -45,7 +45,7 @@ public enum SGAIError: Error, LocalizedError {
 public final class SGAIProviderStore {
     public static let shared = SGAIProviderStore()
 
-    private let queue = DispatchQueue(label: "com.swiftgram.aiProvider")
+    private let lock = NSLock()
     private var providers: [SGAIProvider] = []
     private var activeIndex: Int = 0
     private var loaded = false
@@ -71,63 +71,57 @@ public final class SGAIProviderStore {
     }
 
     public var all: [SGAIProvider] {
-        return queue.sync(execute: {
-            loadIfNeeded()
-            return providers
-        })
+        lock.lock()
+        defer { lock.unlock() }
+        loadIfNeeded()
+        return providers
     }
 
     public var active: SGAIProvider? {
-        return queue.sync(execute: {
-            loadIfNeeded()
-            guard providers.indices.contains(activeIndex) else { return nil }
-            return providers[activeIndex]
-        })
+        lock.lock()
+        defer { lock.unlock() }
+        loadIfNeeded()
+        guard providers.indices.contains(activeIndex) else { return nil }
+        return providers[activeIndex]
     }
 
     public func activeIndexValue() -> Int {
-        return queue.sync(execute: {
-            loadIfNeeded()
-            return activeIndex
-        })
+        lock.lock()
+        defer { lock.unlock() }
+        loadIfNeeded()
+        return activeIndex
     }
 
     public func save(_ provider: SGAIProvider, at index: Int?) {
-        let _: Bool = queue.sync { () -> Bool in
-            loadIfNeeded()
-            if let index, providers.indices.contains(index) {
-                providers[index] = provider
-            
-            return true
+        lock.lock()
+        defer { lock.unlock() }
+        loadIfNeeded()
+        if let index, providers.indices.contains(index) {
+            providers[index] = provider
         } else {
-                providers.append(provider)
-                activeIndex = providers.count - 1
-            }
-            persist()
-        })
+            providers.append(provider)
+            activeIndex = providers.count - 1
+        }
+        persist()
     }
 
     public func remove(at index: Int) {
-        let _: Bool = queue.sync { () -> Bool in
-            loadIfNeeded()
-            guard providers.indices.contains(index) else { return 
-            return true
-        }
-            providers.remove(at: index)
-            activeIndex = min(activeIndex, max(providers.count - 1, 0))
-            persist()
-        })
+        lock.lock()
+        defer { lock.unlock() }
+        loadIfNeeded()
+        guard providers.indices.contains(index) else { return }
+        providers.remove(at: index)
+        activeIndex = min(activeIndex, max(providers.count - 1, 0))
+        persist()
     }
 
     public func activate(_ index: Int) {
-        let _: Bool = queue.sync { () -> Bool in
-            loadIfNeeded()
-            guard providers.indices.contains(index) else { return 
-            return true
-        }
-            activeIndex = index
-            persist()
-        })
+        lock.lock()
+        defer { lock.unlock() }
+        loadIfNeeded()
+        guard providers.indices.contains(index) else { return }
+        activeIndex = index
+        persist()
     }
 }
 

@@ -15,7 +15,7 @@ public struct SGAIMessage: Codable {
 public final class SGAIChatHistoryStore {
     public static let shared = SGAIChatHistoryStore()
 
-    private let queue = DispatchQueue(label: "com.swiftgram.aiHistory")
+    private let lock = NSLock()
 
     private var fileURL: URL {
         let dir = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask)[0]
@@ -34,34 +34,31 @@ public final class SGAIChatHistoryStore {
     }
 
     public func history() -> [SGAIMessage] {
-        return queue.sync(execute: { load() })
+        lock.lock()
+        defer { lock.unlock() }
+        return load()
     }
 
     public func append(_ message: SGAIMessage) {
-        let _: Bool = queue.sync { () -> Bool in
-            var messages = load()
-            messages.append(message)
-            if messages.count > 500 {
-                messages.removeFirst(messages.count - 500)
-            
-            return true
+        lock.lock()
+        defer { lock.unlock() }
+        var messages = load()
+        messages.append(message)
+        if messages.count > 500 {
+            messages.removeFirst(messages.count - 500)
         }
-            persist(messages)
-        })
+        persist(messages)
     }
 
     public func clear() {
-        let _: Bool = queue.sync { () -> Bool in
-            try? FileManager.default.removeItem(at: fileURL)
-        })
+        lock.lock()
+        defer { lock.unlock() }
+        try? FileManager.default.removeItem(at: fileURL)
     }
 
     public func requestContext(limit: Int = 30) -> [(role: String, content: String)] {
-        return queue.sync(execute: {
-            let messages = load().suffix(limit)
-            return messages.map { (role: $0.role, content: $0.content) 
-            return true
-        }
-        })
+        lock.lock()
+        defer { lock.unlock() }
+        return load().suffix(limit).map { (role: $0.role, content: $0.content) }
     }
 }

@@ -3,6 +3,7 @@ import SwiftUI
 import SGSwiftUI
 import SGStrings
 import AccountContext
+import Display
 import TelegramPresentationData
 
 public func sgAIChatRootController(context: AccountContext, presentationData: PresentationData? = nil) -> ViewController {

@@ -127,7 +127,6 @@ struct SGAutoPilotEditView: View {
     }
 
     var body: some View {
-        NavigationView {
             Form {
                 if initial.peerId == 0 {
                     TextField("AutoPilot.PeerId".i18n(lang), text: $peerIdText)
@@ -201,6 +200,5 @@ struct SGAutoPilotEditView: View {
                     }
                 }
             }
-        }
     }
 }

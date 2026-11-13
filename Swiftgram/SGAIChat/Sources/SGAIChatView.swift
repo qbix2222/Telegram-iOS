@@ -48,8 +48,7 @@ struct SGAIChatView: View {
             }
             Divider()
             HStack(spacing: 8) {
-                TextField("Settings.AI.InputPlaceholder".i18n(lang), text: $input, axis: .vertical)
-                    .lineLimit(1...5)
+                TextField("Settings.AI.InputPlaceholder".i18n(lang), text: $input)
                     .padding(8)
                     .background(Color.secondary.opacity(0.08))
                     .cornerRadius(18)

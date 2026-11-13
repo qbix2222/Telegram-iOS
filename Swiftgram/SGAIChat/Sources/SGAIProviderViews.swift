@@ -90,7 +90,6 @@ struct SGAIProviderEditView: View {
     @State private var errorMessage: String?
 
     var body: some View {
-        NavigationStack {
             Form {
                 Section("Settings.AI.Name".i18n(lang)) {
                     TextField("Settings.AI.NamePlaceholder".i18n(lang), text: $provider.name)
@@ -165,7 +164,6 @@ struct SGAIProviderEditView: View {
                     .disabled(provider.name.isEmpty || provider.endpoint.isEmpty)
                 }
             }
-        }
     }
 
     private func loadModels() {
