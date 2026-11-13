@@ -746,7 +746,7 @@ public func sgSettingsController(context: AccountContext/*, focusOnItemTag: Int?
         if let archiveAction = action as? SGArchiveAction, archiveAction == .clearArchive {
             SGMessageArchiveStore.shared.clearAll()
             let presentationData = context.sharedContext.currentPresentationData.with { $0 }
-            context.sharedContext.mainWindow?.present(UndoOverlayController(presentationData: presentationData, content: .info(title: nil, text: i18n("Settings.Archive.Cleared", presentationData.strings.baseLanguageCode), timeout: nil, action: { _ in return true }), action: { _ in return true }), in: .window(.root))
+                        presentControllerImpl?(UndoOverlayController(presentationData: presentationData, content: .info(title: nil, text: i18n("Settings.Archive.Cleared", presentationData.strings.baseLanguageCode), timeout: nil, customUndoText: nil), elevatedLayout: false, action: { _ in return true }), nil)
         }
     }, searchInput: { searchQuery in
         updateState { state in
