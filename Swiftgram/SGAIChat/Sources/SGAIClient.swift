@@ -93,11 +93,13 @@ public final class SGAIProviderStore {
     }
 
     public func save(_ provider: SGAIProvider, at index: Int?) {
-        _ = queue.sync { () -> Void in
+        let _: Bool = queue.sync { () -> Bool in
             loadIfNeeded()
             if let index, providers.indices.contains(index) {
                 providers[index] = provider
-            } else {
+            
+            return true
+        } else {
                 providers.append(provider)
                 activeIndex = providers.count - 1
             }
@@ -106,9 +108,11 @@ public final class SGAIProviderStore {
     }
 
     public func remove(at index: Int) {
-        _ = queue.sync { () -> Void in
+        let _: Bool = queue.sync { () -> Bool in
             loadIfNeeded()
-            guard providers.indices.contains(index) else { return }
+            guard providers.indices.contains(index) else { return 
+            return true
+        }
             providers.remove(at: index)
             activeIndex = min(activeIndex, max(providers.count - 1, 0))
             persist()
@@ -116,9 +120,11 @@ public final class SGAIProviderStore {
     }
 
     public func activate(_ index: Int) {
-        _ = queue.sync { () -> Void in
+        let _: Bool = queue.sync { () -> Bool in
             loadIfNeeded()
-            guard providers.indices.contains(index) else { return }
+            guard providers.indices.contains(index) else { return 
+            return true
+        }
             activeIndex = index
             persist()
         })
