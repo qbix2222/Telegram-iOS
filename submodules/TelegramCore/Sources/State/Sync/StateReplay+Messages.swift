@@ -276,7 +276,7 @@ extension ReplayContext {
     
     func applyDeleteMessagesWithGlobalIds(_ ids: [Int32]) {
         if SGMessageArchiveStore.shared.isEnabled {
-            let messageIds = self.postbox.messageIdsForGlobalIds(ids)
+            let messageIds = self.transaction.messageIdsForGlobalIds(ids)
             SGMessageArchiveStore.shared.archive(messageIds: messageIds, transaction: self.transaction)
         }
         var resourceIds: [MediaResourceId] = []
