@@ -93,7 +93,7 @@ public final class SGMessageArchiveStore {
         lock.lock()
         defer { lock.unlock() }
         loadIfNeeded()
-        guard case let .Id(id) = message.id else { return }
+        let id = message.id
         let key = id.peerId.toInt64()
         if cache[key]?[id.id] != nil { return }
 
@@ -108,7 +108,7 @@ public final class SGMessageArchiveStore {
             globallyUniqueId: message.globallyUniqueId,
             timestamp: message.timestamp,
             deletedAt: deletedAt,
-            authorId: message.authorId?.toInt64(),
+            authorId: message.author?.id.toInt64(),
             text: message.text,
             mediaSummary: mediaSummary,
             isOutgoing: !message.flags.contains(.Incoming),
@@ -118,7 +118,8 @@ public final class SGMessageArchiveStore {
         cache[key]?[id.id] = archived
         order.append((key, id.id))
         if order.count > maxMessages {
-            let drop = order.removeFirst(order.count - maxMessages)
+            let drop = Array(order.prefix(order.count - maxMessages))
+            order.removeFirst(order.count - maxMessages)
             for d in drop {
                 cache[d.peerId]?.removeValue(forKey: d.messageId)
             }
@@ -140,7 +141,7 @@ public final class SGMessageArchiveStore {
         lock.lock()
         defer { lock.unlock() }
         loadIfNeeded()
-        guard case let .Id(id) = message.id else { return }
+        let id = message.id
         let key = id.peerId.toInt64()
         guard let existing = cache[key]?[id.id] else { return }
         if existing.text == message.text { return }
