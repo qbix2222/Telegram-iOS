@@ -71,7 +71,7 @@ public final class SGAutoPilotEngine {
                         localGroupingKey: nil,
                         correlationId: nil,
                         bubbleUpEmojiOrStickersets: []
-                    )]).start(completed: { _ in
+                    )]).start(completed: {
                         SGAutoPilotStore.shared.setBusy(peerId: peerId.toInt64(), busy: false)
                     })
                 }, queue: Queue.mainQueue())
@@ -88,9 +88,9 @@ public final class SGAutoPilotEngine {
         try? FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
         let line = "\(Date().timeIntervalSince1970)\t\(peerId.toInt64())\t\(error)\n"
         if let handle = FileHandle(forWritingAtPath: dir.appendingPathComponent("errors.log").path) {
-            try? handle.seekToEnd()
-            try? handle.write(line.data(using: .utf8) ?? Data())
-            try? handle.close()
+            _ = try? handle.seekToEnd()
+            handle.write(line.data(using: .utf8) ?? Data())
+            _ = try? handle.close()
         } else {
             try? line.data(using: .utf8)?.write(to: dir.appendingPathComponent("errors.log"))
         }
