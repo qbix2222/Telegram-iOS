@@ -63,14 +63,15 @@ jobs:
           rm -rf "$OUTPUT_PATH"
           mkdir -p "$OUTPUT_PATH"
           IPA_DIR="$(readlink bazel-bin/Telegram)"
+          [ -z "$IPA_DIR" ] && IPA_DIR="bazel-bin/Telegram"
           echo "IPA_DIR=$IPA_DIR"
-          ls -la bazel-bin/Telegram/*.ipa
-          cp -f bazel-bin/Telegram/*.ipa $OUTPUT_PATH/
+          ls -la "$IPA_DIR"/*.ipa
+          cp -f "$IPA_DIR"/*.ipa $OUTPUT_PATH/
           ls -la $OUTPUT_PATH/
 
           # collect dsym
           mkdir -p build/DSYMs
-          cp -Rf bazel-bin/Telegram/*.dSYM build/DSYMs/ || true
+          cp -Rf "$IPA_DIR"/*.dSYM build/DSYMs/ || true
           zip -r "./$OUTPUT_PATH/Swiftgram.DSYMs.zip" build/DSYMs 1>/dev/null || true
 
       - name: Create Release
