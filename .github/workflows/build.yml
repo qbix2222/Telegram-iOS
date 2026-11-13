@@ -62,17 +62,14 @@ jobs:
           OUTPUT_PATH="build/artifacts"
           rm -rf "$OUTPUT_PATH"
           mkdir -p "$OUTPUT_PATH"
-          for f in bazel-out/applebin_ios-ios_arm*-opt-ST-*/bin/Telegram/*.ipa; do
-            [ -e "$f" ] || continue
-            cp "$f" $OUTPUT_PATH/
-          done
+          IPA_DIR=$(ls -d bazel-out/applebin_ios-ios_arm*-opt-ST-*/bin/Telegram 2>/dev/null | head -1)
+          cp -f "$IPA_DIR"/*.ipa $OUTPUT_PATH/
+          ls -la $OUTPUT_PATH/
 
           # collect dsym
           mkdir -p build/DSYMs
-          for f in bazel-out/applebin_ios-ios_arm*-opt-ST-*/bin/Telegram/*.dSYM; do
-            cp -R "$f" build/DSYMs/
-          done
-          zip -r "./$OUTPUT_PATH/Telegram.DSYMs.zip" build/DSYMs 1>/dev/null
+          cp -Rf "$IPA_DIR"/*.dSYM build/DSYMs/ || true
+          zip -r "./$OUTPUT_PATH/Swiftgram.DSYMs.zip" build/DSYMs 1>/dev/null || true
 
       - name: Create Release
         id: create_release
@@ -94,8 +91,8 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: /Users/Shared/telegram-ios/build/artifacts/Telegram.ipa
-          asset_name: Telegram.ipa
+          asset_path: /Users/Shared/telegram-ios/build/artifacts/Swiftgram.ipa
+          asset_name: Swiftgram.ipa
           asset_content_type: application/zip
 
       - name: Upload Release DSYM
@@ -105,6 +102,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: /Users/Shared/telegram-ios/build/artifacts/Telegram.DSYMs.zip
-          asset_name: Telegram.DSYMs.zip
+          asset_path: /Users/Shared/telegram-ios/build/artifacts/Swiftgram.DSYMs.zip
+          asset_name: Swiftgram.DSYMs.zip
           asset_content_type: application/zip
